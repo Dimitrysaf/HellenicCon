@@ -26,7 +26,7 @@ export default function NotFoundPage() {
       <ErrorOutlineIcon
         sx={{
           position: 'absolute',
-          fontSize: { xs: 200, sm: 300, md: 400 }, 
+          fontSize: { xs: 400, sm: 500, md: 500 }, 
           color: 'text.primary',
           opacity: 0.1, 
           top: '50%',
@@ -39,13 +39,14 @@ export default function NotFoundPage() {
 
       <Box sx={{ zIndex: 1 }}>
         <Typography variant="h1" component="h1" gutterBottom>
-          404
+          <b>404</b>
         </Typography>
         <Typography variant="h4" component="h2" gutterBottom>
-          Σελίδα δεν βρέθηκε
+          Η σελίδα δεν βρέθηκε
         </Typography>
         <Typography variant="body1" sx={{ mb: 4, maxWidth: 600 }}>
-          Δεν μπορούμε να βρούμε τη σελίδα που ψάχνετε. Ίσως η διεύθυνση URL να είναι λανθασμένη ή η σελίδα να έχει μετακινηθεί.
+          Δεν μπορούμε να βρούμε τη σελίδα που ψάχνετε. <br />
+          Ίσως η διεύθυνση URL να είναι λανθασμένη ή η σελίδα να έχει μετακινηθεί.
         </Typography>
         <Button
           variant="contained"
