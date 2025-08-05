@@ -1,5 +1,4 @@
-// app/layout.js
-
+'use client';
 import * as React from 'react';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
 import { ThemeProvider } from '@mui/material/styles';
@@ -10,18 +9,16 @@ import NavBar from '@/components/navBar/NavBar';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body>
-        <InitColorSchemeScript attribute="class" />
-        <AppRouterCacheProvider options={{ enableCssLayer: true }}>
-          <ThemeProvider theme={theme}>
-            <CssBaseline />
-            <NavBar>
-              {children}
-            </NavBar>
-          </ThemeProvider>
-        </AppRouterCacheProvider>
-      </body>
-    </html>
+    <html lang="en" suppressHydrationWarning><body>
+      <InitColorSchemeScript attribute="class" />
+      <AppRouterCacheProvider options={{ enableCssLayer: true }}>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <NavBar>
+            {children}
+          </NavBar>
+        </ThemeProvider>
+      </AppRouterCacheProvider>
+    </body></html>
   );
 }

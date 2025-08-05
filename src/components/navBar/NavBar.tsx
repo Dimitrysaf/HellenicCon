@@ -1,5 +1,3 @@
-// NavBar.tsx
-
 'use client'
 import * as React from 'react';
 import Box from '@mui/material/Box';
@@ -19,6 +17,10 @@ import Icon from '../Icon';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import { useRouter } from 'next/navigation';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { useTheme } from '@mui/material/styles';
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
 
 const drawerWidth = 240;
 
@@ -28,16 +30,24 @@ const pages = [
 ];
 
 export default function NavBar({ children }: { children: React.ReactNode }) {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md')); 
+
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const router = useRouter();
+  const [isPending, startTransition] = React.useTransition(); // New: useTransition hook
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
 
   const handleNavigation = (path: string) => {
-    router.push(path);
-    if (mobileOpen) {
+    // New: Trigger the router push inside startTransition
+    startTransition(() => {
+      router.push(path);
+    });
+
+    if (isMobile) {
       handleDrawerToggle();
     }
   };
@@ -62,18 +72,19 @@ export default function NavBar({ children }: { children: React.ReactNode }) {
       <CssBaseline />
       <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
         <Toolbar>
-          <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            aria-label="open drawer"
-            sx={{ mr: 2, display: { xs: 'flex', md: 'none' } }}
-            onClick={handleDrawerToggle}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Icon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
-          <Icon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
+          {isMobile && (
+            <IconButton
+              size="large"
+              edge="start"
+              color="inherit"
+              aria-label="open drawer"
+              sx={{ mr: 2 }}
+              onClick={handleDrawerToggle}
+            >
+              <MenuIcon />
+            </IconButton>
+          )}
+          <Icon sx={{ mr: 1, display: 'flex' }} />
           <Typography
             variant="h6"
             noWrap
@@ -84,7 +95,7 @@ export default function NavBar({ children }: { children: React.ReactNode }) {
               display: { xs: 'none', md: 'flex' },
               fontFamily: 'monospace',
               fontWeight: 700,
-              letterSpacing: '.3rem',
+              letterSpacing: '.1rem',
               color: 'inherit',
               textDecoration: 'none',
             }}
@@ -93,42 +104,54 @@ export default function NavBar({ children }: { children: React.ReactNode }) {
           </Typography>
         </Toolbar>
       </AppBar>
-      {/* Permanent Drawer (Desktop) */}
-      <Drawer
-        variant="permanent"
-        sx={{
-          width: drawerWidth,
-          flexShrink: 0,
-          [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box' },
-          display: { xs: 'none', md: 'block' },
-        }}
-      >
-        <Toolbar />
-        <Box sx={{ overflow: 'auto' }}>
-          {navList}
-        </Box>
-      </Drawer>
-      {/* Temporary Drawer (Mobile) */}
-      <Drawer
-        variant="temporary"
-        open={mobileOpen}
-        onClose={handleDrawerToggle}
-        ModalProps={{
-          keepMounted: true, // Better open performance on mobile.
-        }}
-        sx={{
-          display: { xs: 'block', md: 'none' },
-          '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
-        }}
-      >
-        <Toolbar />
-        <Box sx={{ overflow: 'auto' }}>
-          {navList}
-        </Box>
-      </Drawer>
+
+      {isMobile ? (
+        <Drawer
+          variant="temporary"
+          open={mobileOpen}
+          onClose={handleDrawerToggle}
+          ModalProps={{
+            keepMounted: true,
+          }}
+          sx={{
+            display: 'block',
+            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+          }}
+        >
+          <Toolbar />
+          <Box sx={{ overflow: 'auto' }}>
+            {navList}
+          </Box>
+        </Drawer>
+      ) : (
+        <Drawer
+          variant="permanent"
+          sx={{
+            width: drawerWidth,
+            flexShrink: 0,
+            [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box' },
+          }}
+        >
+          <Toolbar />
+          <Box sx={{ overflow: 'auto' }}>
+            {navList}
+          </Box>
+        </Drawer>
+      )}
+
       <Box component="main" sx={{ flexGrow: 1, p: 3, mt: '64px' }}>
         {children}
       </Box>
+
+      {/* Backdrop is now controlled by isPending */}
+      <Backdrop
+        sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 }
+          
+        )}
+        open={isPending}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
     </Box>
   );
 }

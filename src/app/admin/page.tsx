@@ -21,7 +21,7 @@ export default function Home() {
           overflowWrap: 'break-word',
         }}
       >
-        <b>Σύνταγμα</b>
+        <b>Διαχειριστής</b>
       </Typography>
     </Container>
   );
