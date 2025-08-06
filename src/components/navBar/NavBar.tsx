@@ -21,6 +21,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
+import ModeSwitch from './ModeSwitch';
 
 const drawerWidth = 240;
 
@@ -102,6 +103,8 @@ export default function NavBar({ children }: { children: React.ReactNode }) {
           >
             ΤΟ ΣΥΝΤΑΓΜΑ ΤΗΣ ΕΛΛΑΔΟΣ
           </Typography>
+          <Box sx={{ flexGrow: 1 }} />
+          <ModeSwitch />
         </Toolbar>
       </AppBar>
 

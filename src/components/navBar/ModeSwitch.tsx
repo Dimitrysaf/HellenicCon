@@ -7,7 +7,7 @@ import Brightness4Icon from '@mui/icons-material/Brightness4'; // Dark mode
 import Brightness7Icon from '@mui/icons-material/Brightness7'; // Light mode
 import Brightness5Icon from '@mui/icons-material/Brightness5'; // System mode
 
-export default function ModeSwitch() {
+export default function ModeSwitch(props: { sx?: object }) {
   const { mode, setMode } = useColorScheme();
   const [mounted, setMounted] = React.useState(false);
 
@@ -43,8 +43,7 @@ export default function ModeSwitch() {
       sx={{
         display: 'flex',
         justifyContent: 'flex-end',
-        mt: 1,
-        p: 1,
+        ...props.sx,
       }}
     >
       <IconButton onClick={handleModeChange} color="inherit">
