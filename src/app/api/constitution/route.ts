@@ -146,8 +146,8 @@ export async function PUT(request: NextRequest) {
       WHERE id = ${id}`;
 
     return NextResponse.json({ message: 'Part updated successfully' }, { status: 200 });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error updating constitution part:', error);
-    return NextResponse.json({ error: 'Failed to update constitution part' }, { status: 500 });
+    return NextResponse.json({ error: error.message || 'Failed to update constitution part due to an unexpected error.' }, { status: 500 });
   }
 }
