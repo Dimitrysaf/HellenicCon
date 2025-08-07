@@ -1,6 +1,19 @@
-import { getClient } from '../../../src/lib/db';
+import { getClient } from '@/lib/db';
 import { NextRequest, NextResponse } from 'next/server';
 import { v4 as uuidv4 } from 'uuid';
+
+interface ConstitutionPart {
+    id: string;
+    number: number;
+    name: string;
+    content: string | null;
+    parent_id: string | null;
+    type: string;
+}
+
+interface HierarchicalConstitutionPart extends ConstitutionPart {
+    children: HierarchicalConstitutionPart[];
+}
 
 export async function GET(request: NextRequest) {
   try {
@@ -8,7 +21,7 @@ export async function GET(request: NextRequest) {
     const { rows } = await sql`SELECT * FROM constitution_parts ORDER BY parent_id ASC, number ASC`;
 
     // Function to build the hierarchical structure
-    const buildHierarchy = (items: any[], parentId: string | null = null) => {
+    const buildHierarchy = (items: ConstitutionPart[], parentId: string | null = null): HierarchicalConstitutionPart[] => {
       return items
         .filter(item => item.parent_id === parentId)
         .map(item => ({
@@ -17,7 +30,7 @@ export async function GET(request: NextRequest) {
         }));
     };
 
-    const hierarchicalData = buildHierarchy(rows, null);
+    const hierarchicalData = buildHierarchy(rows as ConstitutionPart[], null);
 
     return NextResponse.json(hierarchicalData);
   } catch (error) {
