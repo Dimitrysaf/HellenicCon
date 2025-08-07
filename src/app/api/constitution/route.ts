@@ -64,9 +64,15 @@ export async function POST(request: NextRequest) {
     await sql`INSERT INTO constitution_parts (id, number, name, content, parent_id, type) VALUES (${id}, ${number}, ${name}, ${content}, ${parent_id}, ${type})`;
 
     return NextResponse.json({ message: 'Part added successfully', id }, { status: 201 });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error adding constitution part:', error);
-    return NextResponse.json({ error: 'Failed to add constitution part' }, { status: 500 });
+    let errorMessage = 'Failed to add constitution part';
+    if (error.code === '23503') { // PostgreSQL foreign key violation error code
+      errorMessage = 'Cannot add part: Parent does not exist. Please ensure the selected parent is valid.';
+    } else if (error.message) {
+      errorMessage = error.message;
+    }
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }
 

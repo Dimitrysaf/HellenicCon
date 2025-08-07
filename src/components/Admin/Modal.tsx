@@ -22,7 +22,7 @@ const AddModal = ({ open, onClose, contentType, parents }: ModalProps) => {
     const [id, setId] = useState(uuidv4());
     const [name, setName] = useState('');
     const [number, setNumber] = useState(1);
-    const [parentId, setParentId] = useState('');
+        const [parentId, setParentId] = useState<string | null>('');
     const [content, setContent] = useState('');
     const [errorOpen, setErrorOpen] = useState(false);
     const [errorTitle, setErrorTitle] = useState('');
@@ -39,7 +39,9 @@ const AddModal = ({ open, onClose, contentType, parents }: ModalProps) => {
     }, [open]);
 
     useEffect(() => {
-        if (parentId && parents.length > 0) {
+        if (parentId === '' || parents.length === 0) {
+            setNumber(1);
+        } else {
             const parent = parents.find(p => p.id === parentId);
             if (parent && parent.children) {
                 setNumber(parent.children.length + 1);
@@ -75,7 +77,7 @@ const AddModal = ({ open, onClose, contentType, parents }: ModalProps) => {
     if (!name) {
         canSave = false;
         disableReason = 'Name cannot be empty.';
-    } else if (contentType !== 'Title' && !parentId) {
+    } else if (contentType !== 'Title' && parentId === '') {
         canSave = false;
         disableReason = 'Parent must be selected.';
     } else if (contentType === 'Article' && !content) {
@@ -88,7 +90,7 @@ const AddModal = ({ open, onClose, contentType, parents }: ModalProps) => {
             const response = await fetch('/api/constitution', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id, name, number, parent_id: parentId, content, type: contentType.toLowerCase() })
+                body: JSON.stringify({ id, name, number, parent_id: parentId === '' ? null : parentId, content, type: contentType.toLowerCase() })
             });
 
             if (!response.ok) {
@@ -122,6 +124,7 @@ const AddModal = ({ open, onClose, contentType, parents }: ModalProps) => {
                 <FormControl fullWidth margin="normal">
                     <InputLabel>Parent</InputLabel>
                     <Select value={parentId} onChange={(e) => setParentId(e.target.value)}>
+                        <MenuItem value="">None</MenuItem>
                         {parents.filter(p => p && typeof p === 'object' && 'id' in p && 'name' in p).map((p) => {
                             console.log('Parent object in map:', p);
                             return (
@@ -177,3 +180,5 @@ const style = {
 };
 
 export default AddModal;
+
+
